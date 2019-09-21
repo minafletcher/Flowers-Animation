@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+
+<script>
+	var canvas;
+	var context;
+	var x;
+	var y;
+	var flowers = [];
+
+	function init() {
+		canvas = document.getElementById('myCanvas');
+    	context = canvas.getContext('2d');
+    	context.clearRect(0,0,canvas.width,canvas.height);
+		canvas.addEventListener('mousemove', move, false);
+		canvas.addEventListener('click', reset, false);
+		requestAnimationFrame(draw);
+	}
+
+	function reset() {
+		flowers=[];
+	}
+	function makeFlowers() {
+		for(i=0; i<5; i++) {
+    	flower = {
+	        x: x,
+	        y: y,
+	        v: 1,
+	        color: "pink",
+	        pink: 77,
+	        yellow: 77, 
+	        blue: 46,
+	        lightGreen: 153,
+	        darkGreen: 32,
+	        s: 179
+	    }
+	    flowers.push(flower);
+    }
+	}
+
+	function move(evt) {
+    // Get the position of the mouse on the canvas:
+    var rect = canvas.getBoundingClientRect();
+    x = evt.clientX - rect.left;
+    y = evt.clientY - rect.top;
+    makeFlowers();
+    //changeFlowerColor(flowerColor);
+    //console.log(flowerColor);
+}
+
+	function changeFlowerColor(color) {
+		if (color == "pink") {
+			flowerColor = "yellow";
+			console.log("hi");
+		}
+		else if (color == "yellow") {
+			flowerColor = "blue";
+		}
+		else if (color=="blue") {
+			flowerColor = "lightGreen";
+		}
+		else if (color == "lightGreen") {
+			flowerColor = "darkGreen";
+		}
+		else if (color == "darkGreen") {
+			flowerColor = "pink";
+		}
+		else {
+			flowerColor = flowerColor;
+		}
+		/*
+		if (color == "pink") {
+			flowerColor = "blue";
+			console.log("hi");
+		}
+		else if (color == "blue") {
+			flowerColor = "green";
+		}
+		else if (color=="green") {
+			flowerColor = "pink";
+		}
+		else {
+			flowerColor = "purple";
+		}
+		*/
+	}
+	function draw() {
+		var rect = canvas.getBoundingClientRect();
+		context.clearRect(0,0,canvas.width,canvas.height);
+    	flowers.forEach(function(flower) {
+    		//console.log(flower.x, flower.y)
+    		drawFlower(flower.x, flower.y, flower.pink, flower.yellow, flower.blue, flower.lightGreen, flower.darkGreen, flower.color);
+    		drawCircle(flower.x, flower.y, 5, "#ffffb3", flower.s);
+    		if (flowers.indexOf(flower)%5 == 0) { 
+    		flower.x = flower.x - flower.v;
+        	flower.v = flower.v + 0.05;
+        	flower.color = "pink";
+        	flower.pink = flower.pink + 1;
+        	flower.s = flower.s + 1;
+        	}
+        	else if (flowers.indexOf(flower)%5 == 1) {
+    		flower.y = flower.y - flower.v;
+        	flower.v = flower.v + 0.05;
+        	flower.color = "yellow";
+        	flower.yellow = flower.yellow + 1;
+        	flower.s = flower.s + 1;
+        	}
+        	else if (flowers.indexOf(flower)%5 == 2) {
+        	flower.x = flower.x - flower.v;
+    		flower.y = flower.y + flower.v;
+        	flower.v = flower.v + 0.05;
+        	flower.color = "blue";
+        	flower.blue = flower.blue + 1;
+        	flower.s = flower.s + 1;
+        	}
+        	else if (flowers.indexOf(flower)%5 == 3) {
+        	flower.x = flower.x + flower.v;
+    		flower.y = flower.y + flower.v;
+        	flower.v = flower.v + 0.05;
+        	flower.color = "darkGreen";
+        	flower.darkGreen = flower.darkGreen + 1;
+        	flower.s = flower.s + 1;
+        	}
+        	else {
+        	flower.x = flower.x + flower.v;
+        	flower.v = flower.v + 0.05;
+        	flower.color = "lightGreen";
+        	flower.lightGreen = flower.lightGreen + 1;
+        	flower.s = flower.s + 1;
+        	}
+    	}, false);
+    	requestAnimationFrame(draw);
+	}
+
+	// returns if the flower is outside of the canvas bounds
+	function outsideBounds(flower) {
+		return (flower.x > canvas.width + 25) || (flower.y > canvas.height + 25);
+	}
+
+	function drawCircle(x, y, r, color, strokecolor) {
+	context.beginPath();
+	context.arc(x, y, r, 0, 2 * Math.PI, false);
+	context.fillStyle = rgb(255, 255, strokecolor);
+	context.fill();
+}
+
+	function drawFlower(x, y, p, ye, b, lG, dG, color) {
+		context.beginPath();
+		context.moveTo(x,y);
+		context.bezierCurveTo(x - 20, y - 32, x + 20, y - 32, x, y);
+		context.bezierCurveTo(x + 10, y - 30, x + 42, y, x, y);
+		context.bezierCurveTo(x + 42, y, x + 10, y + 30, x, y);
+		context.bezierCurveTo(x - 20, y + 32, x + 20, y + 32, x, y);
+		context.bezierCurveTo(x - 42, y, x - 10, y + 30, x, y);
+		context.bezierCurveTo(x - 10, y - 30, x - 42, y, x, y);
+		context.closePath();
+		if (color == "pink") {
+		context.strokeStyle = rgb(255, p + 25, p + 25);
+		//context.stroke();
+		var flower_gradient = context.createRadialGradient(x + 20, y, 5, x, y, 40);
+		flower_gradient.addColorStop(0, rgb(255, p + 125, p + 125));
+		flower_gradient.addColorStop(1, rgb(255, p + 25, p + 25));
+		context.fillStyle = flower_gradient;
+		context.fill();
+		}
+		if (color == "yellow") {
+		context.strokeStyle = rgb(255, 255, ye + 26)
+		//context.stroke();
+		var flower_gradient = context.createRadialGradient(x + 20, y, 5, x, y, 40);
+		flower_gradient.addColorStop(0, rgb(255, 255, ye + 26 + 75));
+		flower_gradient.addColorStop(1, rgb(255, 255, ye + 26));
+		context.fillStyle = flower_gradient;
+		context.fill();
+		}
+		if (color == "blue") {
+		context.strokeStyle = rgb(b + 5, b + 158, b + 158)
+		//context.stroke();
+		var flower_gradient = context.createRadialGradient(x + 20, y, 5, x, y, 40);
+		flower_gradient.addColorStop(0, rgb(255, b + 220, b + 175));
+		flower_gradient.addColorStop(1, rgb(b + 5, b + 158, b + 158));
+		context.fillStyle = flower_gradient;
+		context.fill();
+		}
+		if (color == "lightGreen") {
+		context.strokeStyle = rgb(lG + 26, 255, lG + 26)
+		//context.stroke();
+		var flower_gradient = context.createRadialGradient(x + 20, y, 5, x, y, 40);
+		flower_gradient.addColorStop(0, rgb(lG + 26 + 75, 255, lG + 26 + 75));
+		flower_gradient.addColorStop(1, rgb(lG + 26, 255, lG + 26));
+		context.stroke();
+		context.fillStyle = flower_gradient;
+		context.fill();
+		}
+		if (color == "darkGreen") {
+		context.strokeStyle = rgb(255, 255, dG + 102)
+		//context.stroke();
+		var flower_gradient = context.createRadialGradient(x + 20, y, 5, x, y, 40);
+		flower_gradient.addColorStop(0, rgb(dG + 75, dG + 64 + 19 + 75, dG + 32 + 13 + 75));
+		flower_gradient.addColorStop(1, rgb(dG + 6, dG + 64 + 19, dG + 32 + 13));
+		context.fillStyle = flower_gradient;
+		context.fill();
+		}
+		/*
+		if (color == "pink") {
+		context.strokeStyle = rgb(255, c, c);
+		context.stroke();
+		var flower_gradient = context.createRadialGradient(x + 20, y, 5, x, y, 40);
+		flower_gradient.addColorStop(0, rgb(255, c + 75, c + 75));
+		flower_gradient.addColorStop(1, rgb(255, c, c));
+		context.fillStyle = flower_gradient;
+		context.fill();
+		}
+		if (color == "blue") {
+		context.strokeStyle = rgb(c, c, 255)
+		context.stroke();
+		var flower_gradient = context.createRadialGradient(x + 20, y, 5, x, y, 40);
+		flower_gradient.addColorStop(0, rgb(c + 75, c + 75, 255));
+		flower_gradient.addColorStop(1, rgb(c, c, 255));
+		context.fillStyle = flower_gradient;
+		context.fill();
+		}
+		if (color == "green") {
+		context.strokeStyle = rgb(c, 255, c)
+		context.stroke();
+		var flower_gradient = context.createRadialGradient(x + 20, y, 5, x, y, 40);
+		flower_gradient.addColorStop(0, rgb(c + 75, 255, c + 75));
+		flower_gradient.addColorStop(1, rgb(c, 255, c));
+		context.fillStyle = flower_gradient;
+		context.fill();
+		}
+		*/
+	}
+
+	function rgb(r, g, b){
+  	return "rgb("+r+","+g+","+b+")";
+}
+
+window.onload = init;
+</script>
+
+<style type="text/css">
+	canvas {
+		border: solid 1px black;
+	}
+	.container {
+		text-align: center;
+	}
+</style>
+
+<body>
+	<div class="container">
+		<canvas id="myCanvas" width="900" height="530"></canvas>
+	</div>
+</html>
